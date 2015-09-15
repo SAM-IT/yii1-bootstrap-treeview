@@ -1,0 +1,19 @@
+{
+    "name": "sam-it/yii1-bootstrap-treeview",
+    "description": "Yii1 widget wrapper for Bootstrap-TreeView",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Sam",
+            "email": "sam@mousa.nl"
+        }
+    ],
+    "require": {
+        "bower-asset/bootstrap-treeview": "1.*"
+    },
+    "autoload" : {
+        "psr-4" : {
+            "SamIT\\Yii1\\Widgets\\" : ["src/"]
+        }
+    }
+}
