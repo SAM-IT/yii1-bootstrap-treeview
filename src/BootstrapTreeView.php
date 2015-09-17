@@ -15,6 +15,15 @@ class BootstrapTreeView extends \CTreeView {
     public $color = '#000000';
     public $enableLinks = true;
     public $showTags = true;
+    public $showCheckboxes = false;
+
+    /**
+     * Can nodes be selected?
+     * @var string "all" | "leaves" | "none"
+     */
+    public $selectable = "leaves";
+    public $multiSelect = false;
+    public $levels = 2;
     
     /**
      * Initializes the widget.
@@ -39,7 +48,10 @@ class BootstrapTreeView extends \CTreeView {
             'backColor' => $this->backColor,
             'color' => $this->color,
             'enableLinks' => $this->enableLinks,
-            'showTags' => $this->showTags
+            'showTags' => $this->showTags,
+            'showCheckbox' => $this->showCheckboxes,
+            'levels' => $this->levels,
+            'multiSelect' => $this->multiSelect
 
         ]);
 
@@ -50,7 +62,7 @@ class BootstrapTreeView extends \CTreeView {
         }
 
         $json = json_encode($options, JSON_PRETTY_PRINT);
-        $cs->registerScript("bstreeview#$id", "$('#$id').treeview($json);");
+        $cs->registerScript("bstreeview#$id", "$('#$id').treeview($json);", \CClientScript::POS_END);
         echo \CHtml::openTag('div', $this->htmlOptions);
 
     }
@@ -68,15 +80,20 @@ class BootstrapTreeView extends \CTreeView {
 //                'color' => null,
 //                'backColor' => isset($node['active']) && $node['active'] ? '#FF0000' : null,
                 'href' => isset($node['url']) ? \CHtml::normalizeUrl($node['url']) : null,
-                'selectable' => false,
+                'selectable' => $this->selectable == "all" || ($this->selectable == "leaves" && !isset($node['children'])),
                 'state' => [
-                    'checked' => true,
-//                    'disabled' => false,
-                    'expanded' => isset($node['expanded']) ? $node['expanded'] : true,
                     'selected' => isset($node['active']) && $node['active'] ? $node['active'] : false,
                 ],
                 'tags' => isset($node['tags']) ? $node['tags'] : null
             ];
+
+            if (isset($node['expanded'])) {
+                $resultNode['state']['expanded'] = $node['expanded'];
+            }
+            // Add extra data.
+            if (isset($node['data'])) {
+                $resultNode['data'] = $node['data'];
+            }
             $result[] = $resultNode;
         }
         return $result;
