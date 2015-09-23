@@ -1,8 +1,15 @@
 <?php
 
-    namespace SamIT\Yii1\Widgets;;
+namespace SamIT\Yii1\Widgets;;
 
-    use \CHtml;
+use \CHtml;
+
+/**
+ * Class BootstrapTreeView
+ * A Yii 1 wrapper for the bootstrap treeview component.
+ * Requires a path alias 'bower' to be set.
+ * @package SamIT\Yii1\Widgets
+ */
 class BootstrapTreeView extends \CTreeView {
     
     public $checkedIcon = 'glyphicon glyphicon-check';
@@ -35,8 +42,14 @@ class BootstrapTreeView extends \CTreeView {
         $bowerDir = \Yii::app()->params['bower-asset'];
         /** @var CClientScript $cs */
         $cs = \Yii::app()->getClientScript();
-        $cs->registerScriptFile("$bowerDir/bootstrap-treeview/dist/bootstrap-treeview.min.js");
-        $cs->registerCssFile("$bowerDir/bootstrap-treeview/dist/bootstrap-treeview.min.css");
+        /** @var \CAssetManager $am */
+        $am = \Yii::app()->assetManager;
+        if (false === $path = \Yii::getPathOfAlias('bower.bootstrap-treeview.dist')) {
+            throw new \Exception("The BootstrapTreeView wrapper requires a bower path alias to be defined.");
+        }
+        $url = $am->publish($path);
+        $cs->registerScriptFile("$url/bootstrap-treeview.min.js");
+        $cs->registerCssFile("$url/bootstrap-treeview.min.css");
 
         $options = array_merge($this->options, [
             'data' => $this->prepareData($this->data),
